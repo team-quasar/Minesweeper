@@ -22,16 +22,56 @@ public class Server extends JFrame implements ActionListener, WindowListener{
   //GUI fields
   private static final long serialVersionUID = 1L;
   private JButton stopStartHost, startGame;
-  private JButton chat, event;
+  private JTextArea chat, event;
   private JTextField tPortNumber, tHostIP;
   //server constructor
   public Server(int port){
     //init all vars
+    super("Server");
+    this.port = port;
+    sdf = new SimpleDateFormat("HH:mm:ss");
+    al = new ArrayList<ClientThread>();
+    server = null;
+    try{
+      InetAddress ip = InetAddress.getLocalHost();
+      hostIP = ip.getHostAddress();
+    }catch(Exception e){
+      System.out.println(e);
+    }
+    
+    JPanel north = new JPanel();
+    north.add(new JLabel("Port number: "));
+    tPortNumber = new JTextField("  " + port);
+    north.add(tPortNumber);
+    north.add(new JLabel("Host IPv4: "));
+    tHostIP = new JTextField(" " + hostIP);
+    tHostIP.setEditable(false);
+    north.add(tHostIP);
+    // to stop or start the server, we start with "Start"
+    stopStartHost = new JButton("Start");
+    stopStartHost.addActionListener(this);
+    north.add(stopStartHost);
+    startGame = new JButton("Start Game");
+    startGame.setEnabled(false);
+    north.add(startGame);
+    add(north, BorderLayout.NORTH);
+    JPanel center = new JPanel(new GridLayout(2,1));
+    chat = new JTextArea(80,80);
+    chat.setEditable(false);
+    center.add(new JScrollPane(chat));
+    event = new JTextArea(80,80);
+    event.setEditable(false);
+    center.add(new JScrollPane(event)); 
+    add(center);
+    
+    addWindowListener(this);
+    setSize(400, 600);
+    setVisible(true);
   }
   //main method to start server
   public static void main(String[] args){
     //starts server on specified port number 
-    
+    new Server(1500);
   }
   //start method
   public void start(){
@@ -53,7 +93,6 @@ public class Server extends JFrame implements ActionListener, WindowListener{
     //from the client thread arraylist
     //this will scan the arraylist until we find id
   }
-  
   //actionlistener method
   public void actionPerformed(ActionEvent e){
     //depending on which button gets clicked
