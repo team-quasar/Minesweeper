@@ -1,4 +1,4 @@
-public abstract class Space{
+public class Space{
   
   private boolean isClicked;
   public Space(){
@@ -12,5 +12,7 @@ public abstract class Space{
   public boolean getClicked(){
     return isClicked;
   }
-  public abstract String getType();
+  public String getType(){
+    return "Blank";
+  }
 }
