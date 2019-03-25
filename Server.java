@@ -77,7 +77,34 @@ public class Server extends JFrame implements ActionListener, WindowListener{
   public void start(){
     //create server socket and wait for connection reqs
     //uses boolean to establish infinite while loop
-    
+    keepGoing = true;
+    try{
+      ServerSocket sSocket = new ServerSocket(port);
+      while(keepGoing){
+        System.out.println("Server is accepting clients on this port: " + port + ".");
+        Socket socket = sSocket.accept();
+        if(!keepGoing)break;
+        ClientThread t = new ClientThread(socket);
+        al.add(t);
+        t.start();
+      }
+      try{
+        for(int i = 0; i < al.size(); i++){
+          ClientThread ct = al.get(i);
+          try{
+            ct.sInput.close();
+            ct.sOutput.close();
+            ct.socket.close();
+          }catch(IOException ioe){
+            System.out.println(ioe);
+          }
+        }
+      }catch(Exception e){
+        System.out.println(e);
+      }
+    }catch(IOException e){
+      System.out.println(e);
+    }
   }
   protected void stop(){
     //turn boolean false
