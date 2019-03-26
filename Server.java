@@ -55,15 +55,12 @@ public class Server extends JFrame implements ActionListener, WindowListener{
     startGame.setEnabled(false);
     north.add(startGame);
     add(north, BorderLayout.NORTH);
-    JPanel center = new JPanel(new GridLayout(2,1));
-    chat = new JTextArea(80,80);
-    chat.setEditable(false);
-    center.add(new JScrollPane(chat));
+    JPanel center = new JPanel(new GridLayout(1,1));
     event = new JTextArea(80,80);
     event.setEditable(false);
+    event.append("Log:\n");event.setCaretPosition(event.getText().length()-1);
     center.add(new JScrollPane(event)); 
     add(center);
-    
     addWindowListener(this);
     setSize(400, 600);
     setVisible(true);
@@ -89,6 +86,7 @@ public class Server extends JFrame implements ActionListener, WindowListener{
         t.start();
       }
       try{
+        sSocket.close();
         for(int i = 0; i < al.size(); i++){
           ClientThread ct = al.get(i);
           try{
@@ -109,10 +107,25 @@ public class Server extends JFrame implements ActionListener, WindowListener{
   protected void stop(){
     //turn boolean false
     //disable server
+    keepGoing = false;
+    hostIP = "localhost";
+    //looked around on the internet
+    //this is the best thing I found for exiting
+    //The server has to connect  to itself as a client
+    //If you read this and find a better method, please tell me!
+    try{
+      InetAddress ip = InetAddress.getLocalHost();
+      hostIP = ip.getHostAddress();
+    }catch(Exception e){System.out.println(e);}
+    try {
+      new Socket(hostIP, port);
+    }catch(Exception e){}
   }
   private synchronized void display(){
     //This will attempt to display the minesweeper screens to
     //the clients as they appear
+    
+    //Implement after GUI of client is figured out
   }
   synchronized void rmclient(int id){
     //takes id as arg
