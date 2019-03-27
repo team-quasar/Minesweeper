@@ -90,8 +90,8 @@ public class Server extends JFrame implements ActionListener, WindowListener{
         for(int i = 0; i < al.size(); i++){
           ClientThread ct = al.get(i);
           try{
-            ct.sInput.close();
-            ct.sOutput.close();
+            ct.sIn.close();
+            ct.sOut.close();
             ct.socket.close();
           }catch(IOException ioe){
             System.out.println(ioe);
@@ -205,15 +205,30 @@ public class Server extends JFrame implements ActionListener, WindowListener{
   //inner class client thread
   class ClientThread extends Thread{
     Socket socket;
-    ObjectInputStream sInput;
-    ObjectOutputStream sOutput;
+    ObjectInputStream sIn;
+    ObjectOutputStream sOut;
     int id;
     String username;
     //constructor
     ClientThread(Socket socket){
       //init vars
       //make sure each id is unique based on the uniqID
-      
+      id = uniqID++;
+      this.socket = socket;
+      event.append("> Thread attempting to create IO streams\n");
+      event.setCaretPosition(event.getText().length()-1);
+      try{
+        sOut = new ObjectOutputStream(socket.getOutputStream());
+        sIn = new ObjectInputStream(socket.getInputStream());
+        username = (String) sIn.readObject();
+        event.append("> " + username + " entered the fray!\n");
+        event.setCaretPosition(event.getText().length()-1);
+      }catch(IOException e){
+        event.append("> Exception with initializing IOStreams: " + e + "\n");
+        event.setCaretPosition(event.getText().length()-1);
+        return;
+      }
+      catch(ClassNotFoundException e){}
     }
     public void run(){
       //this will run forever until logout
