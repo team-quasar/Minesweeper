@@ -181,6 +181,14 @@ public class Server extends JFrame implements ActionListener, WindowListener{
   public void windowClosing(WindowEvent e){
     //if the user presses the x button and the server is running
     //close the server and exit the app
+    if(server != null){
+      try{
+        server.stop();
+      }catch(Exception ee){}
+      server = null;
+    }
+    dispose();
+    System.exit(0);
   }
   public void windowClosed(WindowEvent e) {}
   public void windowOpened(WindowEvent e) {}
@@ -191,6 +199,7 @@ public class Server extends JFrame implements ActionListener, WindowListener{
   //inner class server thread
   class ServerRunner extends Thread {
     public void run() {
+      
     }
   } 
   //inner class client thread
