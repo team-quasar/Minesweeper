@@ -22,7 +22,7 @@ public class Server extends JFrame implements ActionListener, WindowListener{
   //GUI fields
   private static final long serialVersionUID = 1L;
   private JButton stopStartHost, startGame;
-  private JTextArea chat, event;
+  private JTextArea event;
   private JTextField tPortNumber, tHostIP;
   //server constructor
   public Server(int port){
@@ -58,11 +58,11 @@ public class Server extends JFrame implements ActionListener, WindowListener{
     JPanel center = new JPanel(new GridLayout(1,1));
     event = new JTextArea(80,80);
     event.setEditable(false);
-    event.append("Log:\n");event.setCaretPosition(event.getText().length()-1);
+    event.append("> Log:\n");event.setCaretPosition(event.getText().length()-1);
     center.add(new JScrollPane(event)); 
     add(center);
     addWindowListener(this);
-    setSize(400, 600);
+    setSize(700, 700);
     setVisible(true);
   }
   //main method to start server
@@ -132,6 +132,14 @@ public class Server extends JFrame implements ActionListener, WindowListener{
     //when a client leaves, the client with the id has to be removed
     //from the client thread arraylist
     //this will scan the arraylist until we find id
+    for(int i = 0; i < al.size(); i++){
+      ClientThread client = al.get(i);
+      //finds id -> removes id and then exits method
+      if(client.id == id){
+        al.remove(i);
+        return;
+      }
+    }
   }
   //actionlistener method
   public void actionPerformed(ActionEvent e){
@@ -140,6 +148,34 @@ public class Server extends JFrame implements ActionListener, WindowListener{
     //If the stop server button gets clicked, end it
     //If the start game button gets clicked, run the game for all
     //connected clients and records time until end of match
+    Object o = e.getSource();
+    if(o == stopStartHost && server != null){
+      server.stop();
+      server = null;
+      tPortNumber.setEditable(true);
+      stopStartHost.setText("Start");
+      return;
+    }
+    //cannot reach this statement if server is running because it would go through the
+    //above if statement. I'm clarifying because it is confusing
+    if(o == stopStartHost){
+      int port;
+      try{
+        port = Integer.parseInt(tPortNumber.getText().trim());
+      }catch(Exception ee){
+        event.append("> Invalid port number!\n");event.setCaretPosition(event.getText().length()-1);
+        return;
+      }
+      server = new Server(port);
+      new ServerRunner().start();
+      stopStartHost.setText("Stop");
+      tPortNumber.setEditable(false);
+      startGame.setEnabled(true);
+      return;
+    }
+    if(o == startGame){
+      //start the minesweeper game on all clients
+    }
   }
   //windowlistener methods
   public void windowClosing(WindowEvent e){
@@ -152,6 +188,11 @@ public class Server extends JFrame implements ActionListener, WindowListener{
   public void windowDeiconified(WindowEvent e) {}
   public void windowActivated(WindowEvent e) {}
   public void windowDeactivated(WindowEvent e) {}
+  //inner class server thread
+  class ServerRunner extends Thread {
+    public void run() {
+    }
+  } 
   //inner class client thread
   class ClientThread extends Thread{
     Socket socket;
@@ -180,11 +221,4 @@ public class Server extends JFrame implements ActionListener, WindowListener{
       return true;
     }
   } 
-  //inner class server thread
-  class ServerRunner extends Thread{
-    public void run(){
-      //will start the server
-    }
-    
-  }
 }
