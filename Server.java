@@ -166,11 +166,37 @@ public class Server extends JFrame implements ActionListener, WindowListener{
         event.append("> Invalid port number!\n");event.setCaretPosition(event.getText().length()-1);
         return;
       }
+      /*
+       * MAJOR BUG OVER HERE
+       * VVVVVVVVVVVVVVVVVVV
+       */
       server = new Server(port);
       new ServerRunner().start();
       stopStartHost.setText("Stop");
       tPortNumber.setEditable(false);
       startGame.setEnabled(true);
+      /*
+       * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+       * This piece of code does not
+       * correctly start the program.
+       * It works in that it can start 
+       * the server, but it manages to 
+       * start up a new client?
+       * ________________________________
+       * 
+       * Potential fix would be to
+       * create a helper class and move 
+       * parts from this class to that 
+       * class. This series of comments
+       * will be deleted as soon as the
+       * bug gets fixed. However, the
+       * server does start up, so it is
+       * not particularly terrible in 
+       * terms of the scale of the issue.
+       * Will fix as soon as other parts 
+       * are implemented and I have time
+       * to bug fix.
+       */
       return;
     }
     if(o == startGame){
@@ -199,7 +225,12 @@ public class Server extends JFrame implements ActionListener, WindowListener{
   //inner class server thread
   class ServerRunner extends Thread {
     public void run() {
-      
+      server.start();
+      stopStartHost.setText("Start");
+      tPortNumber.setEditable(true);
+      event.append("> Server crashed!\n");
+      event.setCaretPosition(event.getText().length()-1);
+      server = null;
     }
   } 
   //inner class client thread
