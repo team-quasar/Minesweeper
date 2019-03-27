@@ -26,7 +26,13 @@ public class MinesweeperTest{
         board.processTurn();
       }
       if (choice == 'c'){
-        board.board[y][x].click();
+        NumberSpace spacetest = (NumberSpace)board.board[y][x];
+        if (spacetest.getNumber() != 0 && board.board[y][x].getClicked()){
+          board.clickAdjacentExceptItsForNumbersThisTime(y,x);
+        }
+        else{
+          board.board[y][x].click();
+        }
         board.processTurn();
       }
       }

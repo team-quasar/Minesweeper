@@ -11,7 +11,7 @@ public class Space{
     isClicked = true;
   }
   public void flag(){
-    isFlagged = true;
+    isFlagged = !isFlagged;
   }
   public boolean getClicked(){
     return isClicked;

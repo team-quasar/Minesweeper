@@ -68,6 +68,25 @@ public class Board{
     }
     
   }
+  
+  public void clickAdjacentExceptItsForNumbersThisTime(int y, int x){
+//    System.out.println(toString());
+    NumberSpace spacetest = (NumberSpace)board[y][x];
+   
+      board[y][x].click();
+      try{if (!board[y-1][x-1].getClicked() && !board[y-1][x-1].getFlagged()){board[y-1][x-1].click();}}catch(Exception e){;}
+    try{if (!board[y-1][x].getClicked() && !board[y-1][x-1].getFlagged()){board[y-1][x].click();}}catch(Exception e){;}
+  try{if (!board[y-1][x+1].getClicked() && !board[y-1][x-1].getFlagged()){board[y-1][x+1].click();}}catch(Exception e){;}
+  try{if (!board[y][x-1].getClicked() && !board[y-1][x-1].getFlagged()){board[y][x-1].click();}}catch(Exception e){;}
+  try{if (!board[y][x+1].getClicked() && !board[y-1][x-1].getFlagged()){board[y][x+1].click();}}catch(Exception e){;}
+  try{if (!board[y+1][x-1].getClicked() && !board[y-1][x-1].getFlagged()){board[y+1][x-1].click();}}catch(Exception e){;}
+  try{if (!board[y+1][x].getClicked() && !board[y-1][x-1].getFlagged()){board[y+1][x].click();}}catch(Exception e){;}
+  try{if (!board[y+1][x+1].getClicked() && !board[y-1][x-1].getFlagged()){board[y+1][x+1].click();}}catch(Exception e){;}
+    
+    
+    
+  }
+  
   public void clickAdjacentBackup(){
     int count2 = 0;
     
@@ -192,9 +211,21 @@ public class Board{
             
   
   public String toString(){    
-    String output = "";
+    String output = " ";
+    for (int k = -1; k < (n*2);k++){
+      if (k % 2 == 0){
+        output += k/2;
+      }
+      else{
+        output += "-";
+      }
+      }
+    output += "\n";
+    for (int k = -2; k < (n*2);k++){
+        output += "-";
+      }
     for (int i = 0; i < n; i++){
-      output += "\n";
+      output += ("\n" + i + "|");
       for (int j = 0; j < n; j++){    
         try{
           if (board[i][j].getFlagged()){
@@ -221,7 +252,7 @@ public class Board{
         catch (Exception e){}
     }
       output += "\n";
-      for (int k = 0; k < (n*2);k++){
+      for (int k = -2; k < (n*2);k++){
         output += "-";
       }
     }
