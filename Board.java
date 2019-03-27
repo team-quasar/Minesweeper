@@ -54,14 +54,14 @@ public class Board{
     NumberSpace spacetest = (NumberSpace)board[y][x];
     if (spacetest.getNumber() == 0){
       board[y][x].click();
-      if (!board[y-1][x-1].getClicked()){try{clickAdjacent(y-1,x-1);}catch(Exception e){;}}
-      if (!board[y-1][x].getClicked()){try{clickAdjacent(y-1,x);}catch(Exception e){;}}
-      if (!board[y-1][x+1].getClicked()){try{clickAdjacent(y-1,x+1);}catch(Exception e){;}}
-      if (!board[y][x-1].getClicked()){try{clickAdjacent(y,x-1);}catch(Exception e){;}}
-      if (!board[y][x+1].getClicked()){try{clickAdjacent(y,x+1);}catch(Exception e){;}}
-      if (!board[y+1][x-1].getClicked()){try{clickAdjacent(y+1,x-1);}catch(Exception e){;}}
-      if (!board[y+1][x].getClicked()){try{clickAdjacent(y+1,x);}catch(Exception e){;}}
-      if (!board[y+1][x+1].getClicked()){try{clickAdjacent(y+1,x+1);}catch(Exception e){;}}
+      try{if (!board[y-1][x-1].getClicked()){clickAdjacent(y-1,x-1);}}catch(Exception e){;}
+    try{if (!board[y-1][x].getClicked()){clickAdjacent(y-1,x);}}catch(Exception e){;}
+  try{if (!board[y-1][x+1].getClicked()){clickAdjacent(y-1,x+1);}}catch(Exception e){;}
+  try{if (!board[y][x-1].getClicked()){clickAdjacent(y,x-1);}}catch(Exception e){;}
+  try{if (!board[y][x+1].getClicked()){clickAdjacent(y,x+1);}}catch(Exception e){;}
+  try{if (!board[y+1][x-1].getClicked()){clickAdjacent(y+1,x-1);}}catch(Exception e){;}
+  try{if (!board[y+1][x].getClicked()){clickAdjacent(y+1,x);}}catch(Exception e){;}
+  try{if (!board[y+1][x+1].getClicked()){clickAdjacent(y+1,x+1);}}catch(Exception e){;}
     }
     else{
       board[y][x].click();
@@ -72,10 +72,10 @@ public class Board{
     int count2 = 0;
     
     int n = board.length;
-    System.out.println(":" + n);
     
-    for (int i = 0; i < 12; i++){
-      for (int j = 0; j < 12; j++){
+    
+    for (int i = 0; i < n; i++){
+      for (int j = 0; j < n; j++){
         if (board[i][j].getType() != "Mine"){
         
         if (i == 0 && j == 0){
@@ -168,7 +168,21 @@ public class Board{
             board[i+1][j].click();           
           }         
         }
-        
+        else{
+          NumberSpace spacetest = (NumberSpace)board[i][j];
+          
+          if (spacetest.getNumber() == 0 && board[i][j].getClicked()){
+            board[i-1][j-1].click();
+            board[i-1][j].click();
+            board[i-1][j+1].click();
+            board[i][j-1].click();
+            board[i][j+1].click();
+            board[i+1][j-1].click();
+            board[i+1][j].click();
+            board[i+1][j+1].click();
+            
+          }
+        }
         
       }
       
@@ -183,9 +197,13 @@ public class Board{
       output += "\n";
       for (int j = 0; j < n; j++){    
         try{
-          if (!board[i][j].getClicked()){
+          if (board[i][j].getFlagged()){
+            output += "f";
+          }
+          else if (!board[i][j].getClicked()){
             output += "o";
           }
+          
         else if (board[i][j].getType().equals("Mine")){
           output += "*";
         }
@@ -211,15 +229,22 @@ public class Board{
   return output;
   
 }
-  public boolean isWon(){
+  public String getState(){
+    boolean flag = false;
     for (int i = 0; i < board.length; i++){
       for (int j = 0; j < board[i].length; j++){
         if (board[i][j].getType().equals("Mine") && board[i][j].getClicked()){
-          return true;
+          return "Loss";
+        }
+        if (!board[i][j].getFlagged() && board[i][j].getType().equals("Mine")){
+          flag = true;
         }
       }
     }
-    return false;
+    if (flag){
+      return "Neither";
+    }
+    return "Won";
   }
   public void processTurn(){
     for (int i = 0; i < board.length; i++){
