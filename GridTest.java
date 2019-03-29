@@ -1,5 +1,6 @@
 import java.awt.*;
 import javax.swing.*;
+import java.awt.event.*;
 
 public class GridTest extends JFrame {
 
@@ -22,8 +23,11 @@ public class GridTest extends JFrame {
     JButton[][] arr = new JButton[10][10];
     for (int i = 0; i < 10; i++) {
       for (int j = 0; j < 10; j++) {
-        JButton b = new JButton(new ImageIcon("black.jpg"));
-        b.setSelectedIcon(new ImageIcon("redpic.jpg"));
+        JButton b = new JButton(new ImageIcon("black.png"));
+        b.setSelectedIcon(new ImageIcon(""));
+        b.setMnemonic(KeyEvent.VK_D);
+        b.setActionCommand("disable");
+        b.addActionListener(this);
         arr[i][j] = b;
         panel.add(arr[i][j]);
       }
@@ -42,6 +46,13 @@ public class GridTest extends JFrame {
       for (int i = 0; i < 100; i++)
         p.add(new JLabel("O"));
       pane.add(p);
+    }
+  }
+  
+  public void actionPerformed(ActionEvent e) {
+    if ("disable".equals(e.getActionCommand())) {
+      ActionEvent temp = e.getSource();
+      temp.setEnabled(false);
     }
   }
 }
