@@ -26,8 +26,8 @@ public class GridTest extends JFrame {
         JButton b = new JButton(new ImageIcon("black.png"));
         b.setSelectedIcon(new ImageIcon(""));
         b.setMnemonic(KeyEvent.VK_D);
-        b.setActionCommand("disable");
-        b.addActionListener(this);
+        ActionEvent e = new ActionEvent(b, 1, "disable");
+        //b.addActionEvent(e);
         arr[i][j] = b;
         panel.add(arr[i][j]);
       }
@@ -50,9 +50,10 @@ public class GridTest extends JFrame {
   }
   
   public void actionPerformed(ActionEvent e) {
-    if ("disable".equals(e.getActionCommand())) {
-      ActionEvent temp = e.getSource();
-      temp.setEnabled(false);
+    Object o = e.getSource();
+    if ("disable".equals(e.getActionCommand()) && o instanceof JButton) {
+      o.setEnabled(false);
+      System.out.println("It worked!");
     }
   }
 }
