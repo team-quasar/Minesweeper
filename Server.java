@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.text.SimpleDateFormat;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -14,7 +13,6 @@ public class Server extends JFrame implements ActionListener, WindowListener{
   //Normal fields
   private static int uniqID;
   private ArrayList<ClientThread> al;
-  private SimpleDateFormat sdf;
   private int port;
   private boolean keepGoing;
   private String hostIP;
@@ -29,7 +27,6 @@ public class Server extends JFrame implements ActionListener, WindowListener{
     //init all vars
     super("Server");
     this.port = port;
-    sdf = new SimpleDateFormat("HH:mm:ss");
     al = new ArrayList<ClientThread>();
     server = null;
     try{
@@ -238,6 +235,7 @@ public class Server extends JFrame implements ActionListener, WindowListener{
     Socket socket;
     ObjectInputStream sIn;
     ObjectOutputStream sOut;
+    Object input;
     int id;
     String username;
     //constructor
@@ -264,10 +262,30 @@ public class Server extends JFrame implements ActionListener, WindowListener{
     public void run(){
       //this will run forever until logout
       //this will handle all of the server inputs and displays for each Client Thread
-      
+      boolean kG = true;
+      while(kG){
+        try{
+          input = sIn.readObject();
+        }
+        catch(IOException e){
+          //display error
+          break;
+        }
+        catch(ClassNotFoundException ee){break;}
+        //display based on input
+        
+      }
+      remove(id);
+      close();
     }
     public void close(){
       //closes connection
+      try{if(sOut != null)sOut.close();}
+      catch(Exception e){}
+      try{if(sIn != null)sIn.close();}
+      catch(Exception e){}
+      try{if(socket != null)socket.close();}
+      catch(Exception e){}
     }
     private boolean write(){
       //send displays to output stream
