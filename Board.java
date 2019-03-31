@@ -1,27 +1,42 @@
 import java.util.Arrays;
 public class Board{
-  private int n;
+  private int r;
+  private int c;
   private int minecount;
   public Space[][] board;
-  public Board(int rows, int mc){
-    n = rows;
+  public Board(int rows, int cols, int mc){
+    r = rows;
+    c = cols;
     minecount = mc;
-    board = new Space[n][n];
-    int r = 0;
+    board = new Space[rows][cols];
+    int rand1 = 0;
+    int rand2 = 0;
     for (int i = 0; i < minecount; i++){
-      r = (int)(Math.random() * (((n*n)-1) + 1));      
-      board[r/n][r%n] = new MineSpace();
+      rand1 = (int)(Math.random() * (((r)-1) + 1));
+      rand2 = (int)(Math.random() * (((c)-1) + 1));  
+      try{
+        board[rand1][rand2].getType();
+        i--;
+        continue;
+      }
+      catch (Exception e){                   
+        board[rand1][rand2] = new MineSpace();
+      }
+      
     }
     int adjacent;
-    for (int j = 0; j < (n*n); j++){
+    for (int i = 0; i < (r); i++){
+      for (int j = 0; j < (c); j++){
       try{
-        board[j/n][j%n].getType();
+        board[i][j].getType();
       }
       catch(Exception e){
-        adjacent = getAdjacent(j/n,j%n);        
-        board[j/n][j%n] = new NumberSpace(adjacent);
+        adjacent = getAdjacent(i,j);        
+        board[i][j] = new NumberSpace(adjacent);
+      }
       }
     }
+    
     
   }
   public int getAdjacent(int y, int x){
@@ -90,11 +105,11 @@ public class Board{
   public void clickAdjacentBackup(){
     int count2 = 0;
     
-    int n = board.length;
+    int r = board.length;
+    int c = board[0].length;
     
-    
-    for (int i = 0; i < n; i++){
-      for (int j = 0; j < n; j++){
+    for (int i = 0; i < r; i++){
+      for (int j = 0; j < c; j++){
         if (board[i][j].getType() != "Mine"){
         
         if (i == 0 && j == 0){
@@ -106,7 +121,7 @@ public class Board{
           }
           continue;
         }
-        if (i == 0 && j == board.length-1){
+        else if (i == 0 && j == c-1){
           NumberSpace spacetest = (NumberSpace)board[i][j];
           if (spacetest.getNumber() == 0 && board[i][j].getClicked()){
             board[i][j-1].click();
@@ -116,7 +131,7 @@ public class Board{
           continue;
         }
         
-        if (i == board.length-1 && j == 0){
+        else if (i == r-1 && j == 0){
           NumberSpace spacetest = (NumberSpace)board[i][j];
           if (spacetest.getNumber() == 0 && board[i][j].getClicked()){
             board[i-1][j+1].click();
@@ -125,7 +140,7 @@ public class Board{
           }
           continue;
         }
-        if (i == board.length-1 && j == board.length-1){
+        else if (i == r-1 && j == c-1){
           NumberSpace spacetest = (NumberSpace)board[i][j];
           if (spacetest.getNumber() == 0 && board[i][j].getClicked()){
             board[i-1][j-1].click();
@@ -134,6 +149,7 @@ public class Board{
           }
           continue;
         }
+        else{
         if (i == 0){
           NumberSpace spacetest = (NumberSpace)board[i][j];
           
@@ -149,7 +165,7 @@ public class Board{
           
         }
         
-        if (i == board.length-1){
+        else if (i == r-1){
           NumberSpace spacetest = (NumberSpace)board[i][j];
           
           if (spacetest.getNumber() == 0 && board[i][j].getClicked()){
@@ -163,7 +179,7 @@ public class Board{
           }         
         }
         
-        if (j == 0){
+        else if (j == 0){
           NumberSpace spacetest = (NumberSpace)board[i][j];
           
           if (spacetest.getNumber() == 0 && board[i][j].getClicked()){
@@ -176,7 +192,7 @@ public class Board{
         }
         
         
-        if (j == board[i].length-1){
+        else if (j == board[i].length-1){
           NumberSpace spacetest = (NumberSpace)board[i][j];
           
           if (spacetest.getNumber() == 0 && board[i][j].getClicked()){
@@ -187,6 +203,7 @@ public class Board{
             board[i+1][j].click();           
           }         
         }
+        
         else{
           NumberSpace spacetest = (NumberSpace)board[i][j];
           
@@ -202,17 +219,36 @@ public class Board{
             
           }
         }
-        
+        }
       }
       
     }
     }
+    
+    for (int i = 0; i < r; i++){
+      for (int j = 0; j < c; j++){
+        if (board[i][j].getType() != "Mine"){
+        NumberSpace spacetest = (NumberSpace)board[i][j];
+        if(spacetest.getNumber() == 0 && board[i][j].getClicked()){
+          try{board[i-1][j-1].click();}catch(Exception e){;}
+          try{board[i-1][j].click();}catch(Exception e){;}
+          try{board[i-1][j+1].click();}catch(Exception e){;}
+          try{board[i][j-1].click();}catch(Exception e){;}
+          try{board[i][j+1].click();}catch(Exception e){;}
+          try{board[i+1][j-1].click();}catch(Exception e){;}
+          try{board[i+1][j].click();}catch(Exception e){;}
+          try{board[i+1][j+1].click();}catch(Exception e){;}
+        }
+        }
+      }
+    }
+          
   }
             
   
   public String toString(){    
     String output = " ";
-    for (int k = -1; k < (n*2);k++){
+    for (int k = -1; k < (c*2);k++){
       if (k % 2 == 0){
         output += k/2;
       }
@@ -221,12 +257,12 @@ public class Board{
       }
       }
     output += "\n";
-    for (int k = -2; k < (n*2);k++){
+    for (int k = -2; k < (c*2);k++){
         output += "-";
       }
-    for (int i = 0; i < n; i++){
+    for (int i = 0; i < r; i++){
       output += ("\n" + i + "|");
-      for (int j = 0; j < n; j++){    
+      for (int j = 0; j < c; j++){    
         try{
           if (board[i][j].getFlagged()){
             output += "f";
@@ -252,7 +288,7 @@ public class Board{
         catch (Exception e){}
     }
       output += "\n";
-      for (int k = -2; k < (n*2);k++){
+      for (int k = -2; k < (c*2);k++){
         output += "-";
       }
     }
